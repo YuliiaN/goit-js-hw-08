@@ -1,55 +1,32 @@
 const refs = {
   form: document.querySelector('.feedback-form'),
-  input: document.querySelector('input'),
-  textarea: document.querySelector('textarea'),
+  input: document.querySelector('.feedback-form input'),
+  textarea: document.querySelector('.feedback-form textarea'),
 };
 const STORAGE_KEY = 'feedback-form-state';
 const formData = {};
 
-refs.input.addEventListener('input', formInput);
-refs.textarea.addEventListener('input', formTextarea);
-// refs.form.addEventListener('input', onFormStorage);
+refs.form.addEventListener('input', onInputHandler);
 refs.form.addEventListener('submit', onFormSubmit);
+checkStorage();
 
-checkSavedValues();
-
-function formInput(event) {
-  const input = event.target.value;
-
-  if (input) {
-    formData[event.target.name] = input;
-  }
+function onInputHandler(event) {
+  formData[event.target.name] = event.target.value;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 }
 
-function formTextarea(event) {
-  const textarea = event.target.value;
+function checkStorage() {
+  const storage = localStorage.getItem(STORAGE_KEY);
 
-  if (textarea) {
-    formData[event.target.name] = textarea;
+  if (storage) {
+    const { email, message } = JSON.parse(storage);
+    refs.input.value = email;
+    refs.textarea.value = message;
   }
 }
-
-// function onFormStorage(event) {
-//   const formDataJSON = JSON.stringify(formData);
-//   localStorage.setItem(STORAGE_KEY, formDataJSON);
-
-//   formData[event.target.name] = event.target.value;
-//   const formDataJSON = JSON.stringify(formData);
-//   localStorage.setItem(STORAGE_KEY, formDataJSON);
-//   console.log(event.target.value);
-// }
 
 function onFormSubmit(event) {
   event.preventDefault();
   event.currentTarget.reset();
   localStorage.removeItem(STORAGE_KEY);
-}
-
-function checkSavedValues() {
-  const savedValues = localStorage.getItem(STORAGE_KEY);
-
-  if (savedValues) {
-    refs.input.value = JSON.parse(savedValues).email;
-    refs.textarea.value = JSON.parse(savedValues).message;
-  }
 }
