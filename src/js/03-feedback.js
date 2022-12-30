@@ -13,18 +13,21 @@ refs.form.addEventListener('submit', onFormSubmit);
 checkStorage();
 
 function onInputHandler(event) {
-  formData[event.target.name] = event.target.value;
+  const { target } = event;
+  formData[target.name] = target.value;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 }
 
 function checkStorage() {
   const storage = localStorage.getItem(STORAGE_KEY);
 
-  if (storage) {
-    const { email, message } = JSON.parse(storage);
-    refs.input.value = email;
-    refs.textarea.value = message;
+  if (!storage) {
+    return;
   }
+
+  const { email, message } = JSON.parse(storage);
+  refs.input.value = email;
+  refs.textarea.value = message;
 }
 
 function onFormSubmit(event) {
